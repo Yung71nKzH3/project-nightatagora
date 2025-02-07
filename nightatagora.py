@@ -11,21 +11,33 @@ class TotalHandler:
         self.main_menu = MainMenu(self)
         self.game = Game(self)
         self.settings = Settings(self)
-        
-    def get_menu_choice(self):
-        self.main_menu.display_main_menu()
-        choice = self.main_menu.get_choice()
-        return choice
-        
+
+    def get_user_input(self, prompt="What do you want to do?: "):  # Prompt as parameter | Make sure to define the required data type for exception to work
+        while True:
+            try:
+                user_input = input(prompt).lower()
+                return user_input  # Return the input
+            except ValueError:  # Handle errors if needed
+                print("Invalid input. Please try again.")
+
     def run(self):
-        choice = self.get_menu_choice()
-        if choice == "play":
-            clear_console()
-            self.game.run()
-        elif choice == "settings":
-            self.settings.run()
-        elif choice == "exit":
-            exit()
+        while True:
+            self.main_menu.display_main_menu()
+            user_input = self.get_user_input()
+
+            if user_input == "play" or user_input == "1" or user_input == "a" or user_input == "p":
+                clear_console()
+                self.game.run()
+                break  # Exit the loop after valid input
+            elif user_input == "settings" or user_input == "2" or user_input == "b" or user_input == "s":
+                self.settings.run()
+                break  # Exit the loop
+            elif user_input == "exit" or user_input == "3" or user_input == "c" or user_input == "e":
+                exit()
+            else:
+                print("\rInvalid choice. Please enter 'play', 'settings', or 'exit' (or 1, 2, or 3).", end="")  # \r and end=""
+                input()  # Pause for user to read
+                clear_console()  # Clear the console before redisplaying menu
         
 class MainMenu:
     
@@ -73,10 +85,37 @@ class Settings:
     def __init__(self, total_handler):
         self.total_handler = total_handler
         
+class Intermission:
+    
+    def __init__(self, game):
+        self.game = game
+        
+        self.money = 0 #TEMP
+        
+    def run(self): #implement intermission
+        self.display_game_prep()
+        input()
+        
+    def display_game_prep(self):
+        print(" ____________________________________________________")
+        print("|                                                    |")
+        print(f"|    Effects|Price                     Cash:{self.money}        |")#money no matter what will require file management (Addition of saves? to allow for different/multiple playthroughs!?!?!)
+        print("|----------------------------------------------------|")
+        print("|                                                    |")
+        print("| 1. Coffee - Increase Speed|Price                   |") #Coffee something extra but helpful in the beginning getting rid of bunches
+        print("| 2. Water - Normalise|Price                         |") #Water makes everything technically normal but with everythign with disadvantage it basically is a boost
+        print("| 3. Dinner - Increase Speed|Price                   |") #Food hard to make 100% and expensive but if do then POOP (big time loss) BUT food gives large increase to speed
+        print("| 4.                                                 |") #
+        print("| 5.                                                 |") #
+        print("|____________________________________________________|")
+        print("| Type: Ready | When you are ready to continue.      |")
+        print("|____________________________________________________|")
+        
 class Game:
     
     def __init__(self,  total_handler):
         self.total_handler = total_handler
+        self.intermission = Intermission(self)
         
         self.in_game = False
         
@@ -85,40 +124,25 @@ class Game:
         self.place_c = "c"
         self.place_d = "d"
         
+        #DISHES
         self.done = 0 # Initialize dish count variables
         self.todo = 0
-        
+        #WASHING LIQUID
         self.perleftwl = "100%" # Initialize percentage variables
-        self.perleftsp = "100%"
-        self.perleftsc = "100%"
+        #HUNGER
+        self.perlefth = "100%"
+        #THIRST
+        self.perleftt = "100%"
         
         self.effect1 = "1" # Initialize effects variables
         self.effect2 = "2"
         self.effect3 = "3"
         self.effect4 = "4"
         
-        self.money = 0
-        
         self.user_input = ""
         
     def run(self):
-        self.display_game_prep()
-        self.process_game_action(self.get_user_input())
-        
-    def display_game_prep(self):
-        print(" ____________________________________________________")
-        print("|                                                    |")
-        print(f"|    Effects|Price                     Cash:{self.money}        |")
-        print("|----------------------------------------------------|")
-        print("|                                                    |")
-        print("| 1. Coffee - Increase efficency|Price               |")
-        print("| 2. Water - Normalise BUT toilet|Price              |")
-        print("| 3.                                                 |")
-        print("| 4.                                                 |")
-        print("| 5.                                                 |")
-        print("|____________________________________________________|")
-        print("| Type: Ready | When you are ready to continue.      |")
-        print("|____________________________________________________|")
+        self.intermission.run()
         
     def display_game(self):
         print(" ____________________________________________________")
@@ -126,8 +150,8 @@ class Game:
         print("|   ______________________           |               |")
         print(f"|  |       {self.place_a}   |          |          |  Dishes {self.done}|{self.todo}   |") #A sort of system that will count on the right becoming the total uknown from the start with the amount done on the left
         print(f"|  |           |         {self.place_b}|          |  W.Liq. {self.perleftwl}  |") #A percentage result of how much Washing up liquid is left
-        print(f"|  |           |    1     |______    |  Sponge {self.perleftsp}  |") #Possible addition?
-        print(f"|  |     3     |          |  {self.place_d}   |   |  Scrubb {self.perleftsc}  |") #Possible addition?
+        print(f"|  |           |    1     |______    |  Hunger {self.perlefth}  |") #Possible addition?
+        print(f"|  |     3     |          |  {self.place_d}   |   |  Thirst {self.perleftt}  |") #Possible addition?
         print("|  |           |___   ____|      |   |_______________|")
         print("|  |                      |      |   |    Effects    |")
         print(f"|  |___________|          |  4   |   |  {self.effect1}            |") 
@@ -147,14 +171,15 @@ class Game:
     def process_game_action(self, user_input):
         if self.in_game == False:
             if user_input == "ready":
-                print("TEST")
+                clear_console()
+                self.display_game()
                 input()
+            else:
+                clear_console()
+                self.run()
         
         else:
             print("bye bye")
-            
-        
-        
         
 #     def user_options(self):
         #decide possible user options
