@@ -1,0 +1,1 @@
+Recently started covering OOP and after avoiding it at all costs during my time with C#. So far im  starting to love it through Python and decided to finally create a proper understanding of it by making a simple console based game using it about my current work place to add that flare and motive.
