@@ -2,6 +2,23 @@ import os
 import random
 import time
 
+
+# print(" ____________________________________________________")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|                                                    |")
+# print("|____________________________________________________|")
+
+
 def clear_console():
     os.system('cls')
 
@@ -25,15 +42,18 @@ class TotalHandler:
             self.main_menu.display_main_menu()
             user_input = self.get_user_input()
 
-            if user_input == "play" or user_input == "1" or user_input == "a" or user_input == "p":
+            if user_input in self.main_menu.options1:
                 clear_console()
                 self.game.run()
                 break  # Exit the loop after valid input
-            elif user_input == "settings" or user_input == "2" or user_input == "b" or user_input == "s":
+            
+            elif user_input in self.main_menu.options2:
                 self.settings.run()
                 break  # Exit the loop
-            elif user_input == "exit" or user_input == "3" or user_input == "c" or user_input == "e":
+            
+            elif user_input in self.main_menu.options3:
                 exit()
+                
             else:
                 print("\rInvalid choice. Please enter 'play', 'settings', or 'exit' (or 1, 2, or 3).", end="")  # \r and end=""
                 input()  # Pause for user to read
@@ -43,7 +63,9 @@ class MainMenu:
     
     def __init__(self, total_handler): 
         self.total_handler = total_handler
-        self.options = ["Play", "Settings", "Exit"]
+        self.options1 = ["play", "1", "a", "p"]
+        self.options2 = ["settings", "2", "b", "s"]
+        self.options3 = ["exit", "3", "c", "e"]
         
     def display_main_menu(self):
         print(" ____________________________________________________")
@@ -61,40 +83,60 @@ class MainMenu:
         print("|                                                    |")
         print("|____________________________________________________|")
         
-    def get_choice(self):
-        while True:  # Input validation loop
-            try:
-                choice = int(input("Enter your choice: "))
-                if 1 <= choice <= len(self.options):
-                    return self.options[choice - 1].lower()
-                else:
-                    print(f"Invalid choice. Please enter a number between 1 and {len(self.options)}.")
-            except ValueError:
-                print("Invalid input. Please enter a number.")
-    
-#     def handle_choice(self, choice):
-#         if choice == "play":
-#             self.total_handler.game.run()  # Start the actual game
-#         elif choice == "settings":
-#             self.total_handler.settings.run()  # Run the options menu
-#         elif choice == "exit":
-#             exit()
-        
 class Settings:
     
     def __init__(self, total_handler):
         self.total_handler = total_handler
+        
+        #All settings working of a true or false system? but then of course more in depth settings would possibly introduce levels.
+        
+        self.interaction_setting = ""
+        self.time_setting = ""
+        
+    def display_settings(self):
+        print(" ____________________________________________________")
+        print("|                                                    |")
+        print(f"|     1. Interaction: Personalized or Defined        | #Currently set to: {self.interaction_setting}") 
+        print(f"|     2. Time: Realistic or Artificial               | #Currently set to: {self.time_setting}")
+        print("|      3.                                            |")
+        print("|      4.                                            |")
+        print("|      5.                                            |")
+        print("|      6.                                            |")
+        print("|      7.                                            |")
+        print("|      8.                                            |")
+        print("|      9. Reset: Reset settings to default?          | #Cannot be undone. There is a confirmation")
+        print("|____________________________________________________|")
+        print("| Type: Back | To go to the main menu. | Page 1 of 1 |")
+        print("|____________________________________________________|")
+        
+    def run(self):
+        self.display_settings()
         
 class Intermission:
     
     def __init__(self, game):
         self.game = game
         
-        self.money = 0 #TEMP
+        self.money = 0 #TODO
         
     def run(self): #implement intermission
         self.display_game_prep()
-        input()
+        self.process_prep_game_action(user_input = self.game.total_handler.get_user_input())
+        
+    
+    def process_prep_game_action(self, user_input):
+        if self.game.in_game == False:
+            if user_input == "ready": #DONE?
+                self.game.in_game == True
+                clear_console()
+                self.game.display_game()
+                input()
+            else:
+                clear_console()
+                self.run() #TODO
+        
+        else:
+            print("bye bye")
         
     def display_game_prep(self):
         print(" ____________________________________________________")
@@ -163,23 +205,6 @@ class Game:
         print(".Option A") #Only showing options relevant possible. Secret options always possible TEMP
         print(".Option B")
         print(".Option C")
-        
-    def get_user_input(self):
-        self.user_input = input("What do you want to do?: ")
-        return self.user_input.lower()
-    
-    def process_game_action(self, user_input):
-        if self.in_game == False:
-            if user_input == "ready":
-                clear_console()
-                self.display_game()
-                input()
-            else:
-                clear_console()
-                self.run()
-        
-        else:
-            print("bye bye")
         
 #     def user_options(self):
         #decide possible user options
