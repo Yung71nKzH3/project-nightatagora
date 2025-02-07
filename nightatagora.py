@@ -78,6 +78,8 @@ class Game:
     def __init__(self,  total_handler):
         self.total_handler = total_handler
         
+        self.in_game = False
+        
         self.place_a = "a"  # Initialize place variables
         self.place_b = "b"
         self.place_c = "c"
@@ -101,7 +103,7 @@ class Game:
         
     def run(self):
         self.display_game_prep()
-        self.get_user_input()
+        self.process_game_action(self.get_user_input())
         
     def display_game_prep(self):
         print(" ____________________________________________________")
@@ -115,7 +117,7 @@ class Game:
         print("| 4.                                                 |")
         print("| 5.                                                 |")
         print("|____________________________________________________|")
-        print("| Type: Ready | When you are ready.                  |")
+        print("| Type: Ready | When you are ready to continue.      |")
         print("|____________________________________________________|")
         
     def display_game(self):
@@ -134,13 +136,25 @@ class Game:
         print(f"|  |______________________|______|   |  {self.effect4}            |") #Water if no water effect things will take longer to complete no matter the task
         print("|____________________________________|_______________|") #Require the toilet
         print(" What do you want to do?:")                             #Such issues etc. will be displayed here in the effect menu.
-        print(".Option A") #Only showing options relevant possible. Secret options always possible
+        print(".Option A") #Only showing options relevant possible. Secret options always possible TEMP
         print(".Option B")
         print(".Option C")
         
     def get_user_input(self):
         self.user_input = input("What do you want to do?: ")
-        #use this for the prep/store and for the game itself converting and then working with the actual inputs etc in a different method possibly.
+        return self.user_input.lower()
+    
+    def process_game_action(self, user_input):
+        if self.in_game == False:
+            if user_input == "ready":
+                print("TEST")
+                input()
+        
+        else:
+            print("bye bye")
+            
+        
+        
         
 #     def user_options(self):
         #decide possible user options
